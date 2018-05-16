@@ -4,30 +4,26 @@ pipeline {
 	stages {
 		stage('Build') { 
 			steps { 
-				echo "Build" 
+				echo "Building"
+				chmod +x wrapper.sh
+				sudo docker build . -t sikariwal/hello:${BUILD_NUMBER}
+				echo "Docker Image Built"
 			}
 		}
-		stage('Test'){
+		stage('Push'){
 			steps {
-				echo "Test"
+				echo "Pushing to Docker Hub"
+				sudo docker login -u sikariwal -p ${DOCKER_HUB}
+				sudo docker push sikariwal/hello:${BUILD_NUMBER}
+				echo "Docker Image Pushed to Docker Hub"
 			}
 		}
 		stage('Deploy') {
 			steps {
-				echo "Deploy"
+				echo "Updating Deployment with New Image"
+				kubectl set image deployment/hello hello=sikariwal/hello:${BUILD_NUMBER}
+				echo "Updating Deployment with New Image"
 			}
 		}
-	}
-}
-// Script //
-node {
-	stage('Build') {
-		echo "Build"
-	}
-	stage('Test') {
-		echo "Test"
-	}
-	stage('Deploy') {
-		echo "Deploy"
 	}
 }
