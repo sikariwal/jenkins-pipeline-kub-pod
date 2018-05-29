@@ -3,9 +3,9 @@ pipeline {
 	agent any 
 	stages {
 		stage('Build') {
-			when {
-				branch '*/master'
-			}
+		//	when {
+		//		branch 'master'
+		//	}
 			steps { 
 				echo "Building"
 				sh "chmod +x wrapper.sh"
